@@ -350,6 +350,7 @@ def engageSword():
 # moveRight()
 # @param:
 # @return:
+# Adds the main character's movespeed to the main x coordinate. This will allow the character to move right when the goto() command is triggered in the animation loop.
 def moveRight():
         global mainX
         mainX = mainX + mainChar.movespeed
@@ -358,6 +359,7 @@ def moveRight():
 # moveLeft()
 # @param:
 # @return:
+# Subtracts the main character's movespeed from the main x coordinate. This will allow the character to move left when the goto() command is triggered in the animation loop.
 def moveLeft():
         global mainX
         mainX = mainX - mainChar.movespeed
@@ -366,12 +368,10 @@ def moveLeft():
 # jump()
 # @param:
 # @return:
+# If the main character's jumping attribute is true, increases the mainY by 10. This allows the character to move upwards when the goto() command is triggered in the animation loop.
 def jump():
-        global mainY
-        global mainX
-        global jumpCount
+        global mainY, mainX, jumpCount
         if not mainY >= platforms['top_wall'] and mainChar.jump == True:
-
             mainY = mainY + 10
             mainChar.movespeed = 10
         elif mainY >= platforms['top_wall']:
@@ -384,20 +384,20 @@ def jump():
 # documentcoords()
 # @param:
 # @return:
+# Function mainly drafted for testing purposes, prints out the x and y coordinates of the main character.
 def documentcoords():
         print("X-coordinate: {} Y-coordinate: {}".format(mainChar.xcor(), mainChar.ycor()))
 
 # moveChar()
 # @param:
 # @return:
+# Combines all movement-related functions into one easily callable function. If the main character's direction attribute is left, moveLeft is called. Likewise for moveRight. If the jump attribute is true, triggers the jump command and increases the jumpCount by 1, allowing the jump sequence to be finite yet smooth.
 def moveChar():
         global jumpCount, slashCount
         if mainChar.direction == "left":
             moveLeft()
         elif mainChar.direction == "right":
             moveRight()
-        else:
-            pass
         if mainChar.jump == True:
             jump()
             jumpCount = jumpCount + 1
@@ -408,6 +408,7 @@ def moveChar():
 # triggerJump()
 # @param:
 # @return:
+# Checks if the onPlatform attribute is true, and if so changes the jump attribute to True. Allows the moveChar function to smoothly move the character upwards during the movement phase of the animation loop.
 def triggerJump():
         if mainChar.onPlatform == True:
             mainChar.jump = True
@@ -415,6 +416,7 @@ def triggerJump():
 # turnLeft()
 # @param:
 # @return:
+# Sets the main character's direction to left, and changes the turtle image accordingly.
 def turnLeft():
         mainChar.direction = "left"
         if mainChar.swordEquipped == True:
@@ -425,6 +427,7 @@ def turnLeft():
 # turnRight()
 # @param:
 # @return:
+# Sets the main character's direction to right, and changes the turtle image accordingly.
 def turnRight():
         mainChar.direction = "right"
         if mainChar.swordEquipped == True:
@@ -435,11 +438,12 @@ def turnRight():
 # stop()
 # @param:
 # @return:
+# Sets the main character's direction to stop. This ceases movement of the character.
 def stop():
         mainChar.direction = "stop"
 
 
-platforms = {
+platforms = { #a dictionary used for storing coordinates of platforms in a more memorable way
         'right_wall': 540,
         'left_wall': -500,
         'top_wall': 310,
@@ -466,32 +470,45 @@ platforms = {
         'seventh_top_y': 300
 }
 
-turtle.delay(0)
-won = turtle.Turtle()
+turtle.delay(0) #Removes default lag on the turtle window.
+
+won = turtle.Turtle() #Creates a turtle for displaying ending sequence text.
 won.penup()
 won.hideturtle()
-style = ('Courier', 100, 'normal')
 won.color('white')
 
-highscore = 0
+style = ('Courier', 100, 'normal') #Creates a style for the text turtles to use.
 
-mainChar = Me()
-sword = Sword(mainChar)
-cardinale1 = Cardinale(mainChar, 100, 70, -120, 85, 70)
-cardinale2 = Cardinale(mainChar, -300, 155, -439, -200, 155)
-coins = []
+
+highscore = 0 #Sets the initial highscore to 0. This is changed at the end of each game if the score is higher than this variable's contents.
+
+# CREATING CHARACTER TURTLES
+mainChar = Me() #Creates a main character turtle from the class Me
+sword = Sword(mainChar) #Creates a sword turtle from the class Sword
+cardinale1 = Cardinale(mainChar, 100, 70, -120, 85, 70) #Creates the first Cardinale turtle at x 100 and y 70 from the class Cardinale
+cardinale2 = Cardinale(mainChar, -300, 155, -439, -200, 155) #Creates the first Cardinale turtle at x -300 and y 155 from the class Cardinale
+coins = [] #Creating a list to store coin turtles in
+
+#A list of location tuples for each of the coins to reset to
 coinLocations = [(-228, -211), (-92, -211), (34, -211), (509, -211), (379, -82), (513, -82), (157, -19), (26, -19), (-117, -19), (-251, -19), (-372, -19), (238, 131), (307, 131), (365, 131), (140, 301), (296, 301), (416, 301)]
+#Creates a coin turtle from the class Coin at each location described in the tuple list
 for i in coinLocations:
     coin_x = i[0]
     coin_y = i[1]
     coins.append(Coin(coin_x, coin_y))
-scoreturtle = turtle.Turtle()
-highscoreturtle = turtle.Turtle()
-highscorestamp = turtle.Turtle()
-scorestamp = turtle.Turtle()
+
+# CREATING SCORE TURTLES
+scoreturtle = turtle.Turtle() #A turtle for displaying the current score.
+scorestamp = turtle.Turtle() #A turtle for stamping over the current score to allow a new one to be written over top of it.
+highscoreturtle = turtle.Turtle() #A turtle for displaying the highscore.
+highscorestamp = turtle.Turtle() #A turtle for stamping over the highscore to allow a new one to be written over top of it.
+
+
+# CHANGING BACKGROUND IMAGE
 win.bgpic(imageFiles['backdrop'])
 
 
+# KEYBOARD COMMANDS
 turtle.listen()
 turtle.onkey(turnLeft, "Left")
 turtle.onkey(turnRight, "Right")
@@ -502,13 +519,8 @@ turtle.onkey(slash, "k")
 
 while game:
     attempt = attempt + 1
-    
-    
-    
     turtle.delay(0)
 
-    
-    
     scoreturtle.hideturtle()
     scoreturtle.penup()
     scoreturtle.goto(400, 343)
@@ -530,8 +542,6 @@ while game:
     highscoreturtle.goto(-335, 348)
     highscoreturtle.color('white')
     highscoreturtle.write('Highscore: {}'.format(highscore), font=highscorestyle, align='center')
-    
-
 
     scorestamp.shape('square')
     scorestamp.shapesize(1, 2, 1)
@@ -541,9 +551,20 @@ while game:
     scorestamp.goto(400, 360)
     scorestamp.showturtle()
 
-    startTime = time.monotonic()
+    startTime = time.monotonic() #storing the start time to gain the duration of gameplay later on
+    
+    #SETTING MAIN CHARACTER COORDINATES
     mainX = -450
     mainY = -200
+    jumpCount = 0 #resetting any jumps
+
+    #MOVING THE MAIN CHARACTER TO THE STARTING LOCATION
+    mainChar.goto(mainX, mainY)
+
+    #MOVING THE SWORD TO THE STARTING LOCATION
+    sword.goto(200, -200)    
+
+    #RESETTING COORDINATES, SHAPES AND ATTRIBUTES FOR FURTHER ATTEMPTS
     if attempt > 1:
         cardinale1.x = 100
         cardinale1.y = 70
@@ -555,21 +576,19 @@ while game:
         cardinale2.defeated = False
         cardinale2.deathCount = 0
         cardinale2.shape(imageFiles['cardinale-R'])
-    jumpCount = 0
+        cardinale1.dying = False
+        cardinale1.showturtle()
+        cardinale2.dying = False
+        cardinale2.showturtle()
 
-    mainChar.goto(mainX, mainY)
-
-    cardinale1.dying = False
-    cardinale1.showturtle()
-
-    cardinale2.dying = False
-    cardinale2.showturtle()
     
-    sword.goto(200, -200)         
-
+    
+         
+    #SETTING GAME VARIABLES
     score = 0
     gameOn = True
 
+    #INITIALISING SLASH MECHANICS
     slash = False
     slashCount = 0
 
@@ -577,29 +596,28 @@ while game:
 
 
 
-
+    #MAIN LOOP
     while gameOn:
-        
-        mainChar.dead(cardinale1, cardinale2)
-        moveChar()
-        mainChar.goto(mainX,mainY)
-        mainChar.runProgram()
-        cardinale1.prowl()
-        cardinale2.prowl()
-        cardinale1.goto(cardinale1.x, cardinale1.y)
-        cardinale2.goto(cardinale2.x, cardinale2.y)
-        mainChar.is_on_platform()
-        if mainChar.jump != True:
+        mainChar.dead(cardinale1, cardinale2) #checks if the main character is dead
+        moveChar() #sets the main character's coordinates to move to
+        mainChar.goto(mainX,mainY) #moves to those set coordinates
+        mainChar.runProgram() #checks if the victory target has been reached
+        cardinale1.prowl() #sets the first cardinale's coordinates to move to
+        cardinale2.prowl() #sets the second cardinale's coordinates to move to
+        cardinale1.goto(cardinale1.x, cardinale1.y) #moves the first cardinale
+        cardinale2.goto(cardinale2.x, cardinale2.y) #moves the second cardinale
+        mainChar.is_on_platform() #sets onPlatform attribute to match the status of the main character's platform stance
+        if mainChar.jump != True: #if the character is not jumping, check for gravity to act on it
             mainChar.gravity()
-        mainChar.walls()
-        if mainChar.swordEquipped != True:
+        mainChar.walls() #check for collisions with the walls and act accordingly
+        if mainChar.swordEquipped != True: #if the sword has not been collected yet, check for its collection and equip it when it has been collected
             sword.checkCollected()
             mainChar.equipSword(sword)
         else: 
-            engageSword()
-            cardinale1.defeat()
+            engageSword() #engage the sword if it is being triggered
+            cardinale1.defeat() #check if the cardinales have been slashed and if so trigger their defeats
             cardinale2.defeat()
-        if cardinale1.dying == True:
+        if cardinale1.dying == True: #keeps the cardinales on the screen for a bit after they are slashed
             cardinale1.deathCount = cardinale1.deathCount + 1
         if cardinale2.dying == True:
             cardinale2.deathCount = cardinale2.deathCount + 1
@@ -619,7 +637,6 @@ while game:
         game = False
         turtle.bye()
     else:
-        
         print("Starting again in 3...")
         time.sleep(1)
         print("2...")
