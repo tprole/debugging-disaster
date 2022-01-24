@@ -42,19 +42,22 @@ for file in imageFiles: #registers each filename as a shape for turtles to be cr
     win.register_shape(imageFiles[file])
 
 
-# CREATING THE INSTRUCTIONS AT THE BOTTOM OF THE SCREEN
+# WRITING THE INSTRUCTIONS AT THE BOTTOM OF THE SCREEN
 
-instructions = turtle.Turtle()
-instructions.penup()
-instructions.hideturtle()
+instructions = turtle.Turtle() #creating the instructions turtle
+instructions.penup() #so it doesn't draw lines under itself
+instructions.hideturtle() #so there's no triangle shown
 instructions.color('white')
-instructions.goto(-300, -400)
-instructionstyle = ('Courier', 15, 'bold')
+instructions.goto(-450, -400)
+instructionstyle = ('Courier', 15, 'bold') #creating the font for the instructions
+#writing the instructions
 instructions.write("Arrow keys to change direction", font=instructionstyle, align='center')
-instructions.goto(0, -400)
+instructions.goto(-200, -400)
 instructions.write("Space to jump", font=instructionstyle, align='center')
-instructions.goto(195, -400)
+instructions.goto(0, -400)
 instructions.write("K to attack", font=instructionstyle, align='center')
+instructions.goto(350, -400)
+instructions.write("Try to run the program from the top right corner!", font=instructionstyle, align='center')
 
 
 # CREATING A CLASS FOR THE MAIN CHARACTER
@@ -147,16 +150,16 @@ class Me(turtle.Turtle):
         # Checks if the Cardinales are in a dying state, in which case they should not affect the gameplay. If they are not in a dying state, compares the coordinates of the main character with those of the Cardinales. If they are colliding, triggers the game over sequence.
         def dead(self, cardinale1, cardinale2):
             global mainX, mainY, slash, gameOn
-            if cardinale1.dying != True:
-                if mainX <= cardinale1.x + 50 and mainX >= cardinale1.x - 50 and slash != True:
+            if cardinale1.dying != True: #only runs this if the Cardinale isn't dying. avoids unwanted collisions from after killing the Cardinales so that the main character doesn't die
+                if mainX <= cardinale1.x + 50 and mainX >= cardinale1.x - 50 and slash != True: #detecting collisions between the main character and Cardinale1
                     if mainY <= cardinale1.y + 25 and mainY >= cardinale1.y - 25:
-                        gameOn = False
-                        bigstyle = ('Courier', 200, 'bold')
+                        gameOn = False #exiting the while loop
+                        bigstyle = ('Courier', 200, 'bold') #big style for giant "GAME OVER" text
                         won.goto(0, 0)
                         won.write('GAME OVER', font=bigstyle, align='center')
                         
                         won.goto(0, -50)
-                        smallstyle = ('Courier', 50, 'bold')
+                        smallstyle = ('Courier', 50, 'bold') #small style for the small print after GAME OVER
                         endtime = time.monotonic()
                         timeTaken = endtime - startTime
                         format_time = "{:.2f}".format(timeTaken)
@@ -190,21 +193,21 @@ class Me(turtle.Turtle):
         def walls(self):
             global mainX
             global mainY
-            if mainX > platforms['right_wall']:
+            if mainX > platforms['right_wall']: #if the x is greater than the coords of the right wall, it's hit the right wall and moves back 10x
                 mainX = mainX - 10
-                self.direction = "left"
-                if self.swordEquipped:
-                    self.shape(imageFiles['flip-sword-neutral'])
+                self.direction = "left" #sets the direction to left so it bounces
+                if self.swordEquipped: 
+                    self.shape(imageFiles['flip-sword-neutral']) #flips the image to match the direction
                 else:
                     self.shape(imageFiles['flip'])
-            elif mainX < platforms['left_wall']:
+            elif mainX < platforms['left_wall']: #if the x is less than the coords of the left wall, it's hit the left wall and moves forward 10x
                 mainX = mainX + 10
-                self.direction = "right"
+                self.direction = "right" #sets the direction to right so it bounces
                 if self.swordEquipped:
-                    self.shape(imageFiles['sword-neutral'])
+                    self.shape(imageFiles['sword-neutral']) #flips the image to match the direction
                 else:
                     self.shape(imageFiles['tara'])
-            elif mainY >= platforms['top_wall']:
+            elif mainY >= platforms['top_wall']: #if the y is greater than the coords of the top wall, it's hit the top wall and moves down 10y
                 mainY = mainY - 10
 
 
@@ -235,20 +238,20 @@ class Sword(turtle.Turtle):
 class Cardinale(turtle.Turtle):
         def __init__(self, character, x, y, platform_left, platform_right, platform_y):
             super().__init__()
-            self.penup()
-            self.shape(imageFiles['cardinale-R'])
-            self.direction = 'left'
-            self.x = x
-            self.y = y
-            self.platform_left = platform_left
-            self.platform_right = platform_right
-            self.platform_y = platform_y
-            self.setposition(self.x, self.y)
-            self.character = character
-            self.defeated = False
-            self.movespeed = 2
-            self.deathCount = 0
-            self.dying = False
+            self.penup() #so they don't draw a line behind them for the entire game!
+            self.shape(imageFiles['cardinale-R']) #shape to the R image
+            self.direction = 'left' #the Cardinales start out going left
+            self.x = x #the starting x-coordinate determined in the parameters of the class
+            self.y = y #the starting y-coordinate determined in the parameters of the class
+            self.platform_left = platform_left #the x-cooredinate of the left hand side of the platform the Cardinale will be prowling
+            self.platform_right = platform_right #the x-coordinate of the right hand side of the platform the Cardinale will be prowling
+            self.platform_y = platform_y #the y-coordinate of the platform the Cardinale will be prowling
+            self.setposition(self.x, self.y) #moving the cardinale to its initial position
+            self.character = character #the character that the enemy will be interacting with
+            self.defeated = False #the enemy has not been defeated yet, so its interactions have consequence
+            self.movespeed = 2 #speed of the enemy
+            self.deathCount = 0 #used for keeping the enemy on the screen for a short period of time after defeated; right now, the enemy has not been defeated so this is 0
+            self.dying = False #also used for keeping the enemy on the screen. False as the character has not defeated the enemy
 
         # defeat()
         # @param: self
@@ -278,15 +281,15 @@ class Cardinale(turtle.Turtle):
         # @return:
         # This is the moving function for the Cardinale. Checks the set direction attribute and moves the turtle accordingly. Changes the direction attribute when the end of the platform being prowled upon is reached. If the deathCount attribute has escalated to 50 repetitions, changes the image to a skull and moves the Cardinale upwards away from the game screen.
         def prowl(self):
-            if self.direction == 'left':
+            if self.direction == 'left': #moves in the correct direction according to the attribute
                 self.moveLeft()
             elif self.direction == 'right':
                 self.moveRight()
-            if self.x >= self.platform_right:
+            if self.x >= self.platform_right: #changes direction if it hits the end of the platform
                 self.direction = 'left'
             elif self.x <= self.platform_left:
                 self.direction = 'right'
-            if self.deathCount == 50:
+            if self.deathCount == 50: #when it dies the image changes to a skull and it moves upwards
                 self.shape(imageFiles['skull'])
                 self.y = 600
 
@@ -295,14 +298,14 @@ class Cardinale(turtle.Turtle):
 class Coin(turtle.Turtle):
         def __init__(self, x, y):
             super().__init__()
-            self.x = x
-            self.y = y
+            self.x = x #the x-coordinate the coin will start at
+            self.y = y #the y-coordinate the coin will start at
             self.penup()
             self.hideturtle()
-            self.goto(self.x, self.y)
-            self.shape(imageFiles['coin'])
+            self.goto(self.x, self.y) #going to the starting position
+            self.shape(imageFiles['coin']) #setting correct image
             self.showturtle()
-            self.collected = False
+            self.collected = False #has not been collected yet, this allows it to be collected right now
         
         # collect()
         # @param: self
@@ -310,7 +313,7 @@ class Coin(turtle.Turtle):
         # Checks for a collision between the coin and the main character. If a collision is detected, hides the coin, sets the collected attribute to True, moves the coin away from the game screen, and increases the score.
         def collect(self):
             global score, mainX, mainY
-            if self.x <= mainX + 30 and self.x >= mainX - 30 and self.y >= mainY-10 and self.y <= mainY + 10:
+            if self.x <= mainX + 30 and self.x >= mainX - 30 and self.y >= mainY-10 and self.y <= mainY + 10: #detecting collision with main character
                 self.hideturtle()
                 self.collected = True
                 self.goto(0, 650)
@@ -342,15 +345,15 @@ def engageSword():
                 else:
                     mainChar.shape(imageFiles['flip-sword-engaged'])
             mainChar.swordEngaged = True
-            if mainX <= cardinale1.xcor() + 100 and mainX >= cardinale1.xcor() - 100:
+            if mainX <= cardinale1.xcor() + 100 and mainX >= cardinale1.xcor() - 100: #collision between main character and cardinale1
                 if mainY <= cardinale1.ycor() + 100 and mainY >= cardinale1.ycor() - 100:
                     cardinale1.defeated = True
-            if mainX <= cardinale2.xcor() + 100 and mainX >= cardinale2.xcor() - 100:
+            if mainX <= cardinale2.xcor() + 100 and mainX >= cardinale2.xcor() - 100: #collision between main character and cardinale2
                 if mainY <= cardinale2.ycor() + 100 and mainY >= cardinale2.ycor() - 100:
                     cardinale2.defeated = True
             slashCount + slashCount + 1
                 
-            if slashCount >= 30:
+            if slashCount >= 30: #if the slashCount exceeds 30, exit from the slashing state and revert to a neutral sword state
                 slashCount = 0
                 slash = False
                 if mainChar.direction == 'right':
@@ -383,11 +386,11 @@ def moveLeft():
 def jump():
         global mainY, mainX, jumpCount
         if not mainY >= platforms['top_wall'] and mainChar.jump == True:
-            mainY = mainY + 10
-            mainChar.movespeed = 10
-        elif mainY >= platforms['top_wall']:
-            jumpCount = 10
-        if jumpCount >= 15:
+            mainY = mainY + 10 #increase mainY to move up on next moving phase
+            mainChar.movespeed = 10 #increases the speed to allow jumping between platforms
+        elif mainY >= platforms['top_wall']: #if the character hits the top wall, stop jumping
+            jumpCount = 15
+        if jumpCount >= 15: #when the jump is finished, change speed back and stop jumping
             mainChar.jump = False
             jumpCount = 0
             mainChar.movespeed = 1
@@ -532,6 +535,16 @@ while game:
     attempt = attempt + 1
     turtle.delay(0)
 
+    #Initialises the score stamp
+    scorestamp.shape('square')
+    scorestamp.shapesize(1, 2, 1)
+    scorestamp.color('#001735')
+    scorestamp.penup()
+    scorestamp.hideturtle()
+    scorestamp.goto(400, 360)
+    scorestamp.showturtle()
+
+    #Starts out by writing the score as 0
     scoreturtle.hideturtle()
     scoreturtle.penup()
     scoreturtle.goto(400, 343)
@@ -539,6 +552,7 @@ while game:
     scoreturtle.color('white')
     scoreturtle.write('0', font=style, align='center')
 
+    #Initialises the high score stamp
     highscorestamp.shape('square')
     highscorestamp.shapesize(1, 10, 1)
     highscorestamp.color('#001735')
@@ -547,20 +561,13 @@ while game:
     highscorestamp.goto(-335, 360)
     highscorestamp.stamp()
 
+    #Writes the high score from the variable defined above
     highscorestyle = ('Courier', 20, 'bold')
     highscoreturtle.hideturtle()
     highscoreturtle.penup()
     highscoreturtle.goto(-335, 348)
     highscoreturtle.color('white')
     highscoreturtle.write('Highscore: {}'.format(highscore), font=highscorestyle, align='center')
-
-    scorestamp.shape('square')
-    scorestamp.shapesize(1, 2, 1)
-    scorestamp.color('#001735')
-    scorestamp.penup()
-    scorestamp.hideturtle()
-    scorestamp.goto(400, 360)
-    scorestamp.showturtle()
 
     startTime = time.monotonic() #storing the start time to gain the duration of gameplay later on
     
@@ -592,8 +599,6 @@ while game:
         cardinale2.dying = False
         cardinale2.showturtle()
 
-    
-    
          
     #SETTING GAME VARIABLES
     score = 0
@@ -602,9 +607,6 @@ while game:
     #INITIALISING SLASH MECHANICS
     slash = False
     slashCount = 0
-
-
-
 
 
     #MAIN LOOP
