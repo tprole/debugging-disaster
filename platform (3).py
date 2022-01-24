@@ -10,6 +10,7 @@ import turtle
 import random
 import glob
 import time
+import csv
 game = True
 attempt = 0
 
@@ -22,11 +23,21 @@ win.colormode(255) #allows me to use rgb colours
 win.setup(1195, 835) #size of background image
 
 
-# STORING IMAGE FILE PATHS IN A DICTIONARY
+#READING IMAGE PATHS FROM A CSV AND STORING THEM IN A DICTIONARY
 
-filenames = glob.glob('./graphics/gif images/*.gif') #uses the glob module to create a list of all .gif images within the folder
-keys = ['tara', 'sword', 'coin', 'sword-engaged', 'sword-neutral', 'cardinale-R', 'cardinale-4+', 'cardinale', 'backdrop', 'flip-sword-engaged', 'flip', 'flip-sword-neutral', 'skull'] #creating keys to access the images from
-imageFiles = dict(zip(keys, filenames)) #creating a dictionary that allows me to reference image paths by a more memorable name
+reader = csv.reader(open('image_paths.csv', 'r'))
+imageFiles = {}
+for row in reader:
+   k, v = row
+   imageFiles[k] = v
+
+
+# for testing purposes
+# print(imageFiles)
+
+
+#REGISTERING EACH SHAPE TO THE TURTLE WINDOW
+
 for file in imageFiles: #registers each filename as a shape for turtles to be created as
     win.register_shape(imageFiles[file])
 
@@ -94,31 +105,31 @@ class Me(turtle.Turtle):
         # Checks if the main character has reached the end of the final platform. If they have, writes a victory message with a text turtle and closes the while loop.
         def runProgram(self):
             global gameOn, mainY, mainX
-            if mainY >= 290 and mainX >= 460:
+            if mainY >= 290 and mainX >= 460: #coordinates of top right corner, which is the objective
                 bigstyle = ('Courier', 200, 'bold')
                 won.goto(0, 0)
-                won.write('You Won', font=bigstyle, align='center')
+                won.write('You Won', font=bigstyle, align='center') #massive YOU WON in middle of screen
                 smallstyle = ('Courier', 50, 'bold')
                 endtime = time.monotonic()
-                timeTaken = endtime - startTime
-                format_time = "{:.2f}".format(timeTaken)
+                timeTaken = endtime - startTime #super long decimal answer!
+                format_time = "{:.2f}".format(timeTaken) #formats down to 2 decimal points.
                 won.goto(0, -50)
-                won.write('GLORIOUS! You took {} seconds'.format(format_time), font=smallstyle, align='center')
-                print("WIN")
-                gameOn = False
+                won.write('GLORIOUS! You took {} seconds'.format(format_time), font=smallstyle, align='center') #prints out time as a success metric for the game
+                print("WIN") #prints win in terminal as part of the game log
+                gameOn = False #ends while loop
 
         # equipSword()
         # @param: self, sword
         # @return:
         # Takes in a sword turtle as a parameter, and checks that object's 'collected' attribute. If the sword has been collected, change the main character's image to one with a sword equipped.
         def equipSword(self, sword):
-            if sword.collected == True:
+            if sword.collected == True: #if the sword has been collected, then set the image to the correct orientation
                 if self.direction == 'right':
                     self.shape(imageFiles['sword-neutral'])
                 elif self.direction == 'left':
                     self.shape(imageFiles['flip-sword-neutral'])
-                self.swordEquipped = True
-                self.swordEngaged = False
+                self.swordEquipped = True #sword is in hand
+                self.swordEngaged = False #sword isn't being used
 
         # gravity()
         # @param: self
@@ -126,8 +137,8 @@ class Me(turtle.Turtle):
         # Runs the is_on_platform function. Then, if the main character's onPlatform attribute is False, moves the character down by 3 pixels.
         def gravity(self):
             global mainY
-            self.is_on_platform()
-            if self.onPlatform != True:
+            self.is_on_platform() #check if the main character is on the platform
+            if self.onPlatform != True: #if it's not, then change the mainY by -3
                 mainY = mainY - 3
 
         # dead()
@@ -601,7 +612,7 @@ while game:
         mainChar.dead(cardinale1, cardinale2) #checks if the main character is dead
         moveChar() #sets the main character's coordinates to move to
         mainChar.goto(mainX,mainY) #moves to those set coordinates
-        mainChar.runProgram() #checks if the victory target has been reached
+        mainChar.runProgram() #checks if the objective has been reached
         cardinale1.prowl() #sets the first cardinale's coordinates to move to
         cardinale2.prowl() #sets the second cardinale's coordinates to move to
         cardinale1.goto(cardinale1.x, cardinale1.y) #moves the first cardinale
