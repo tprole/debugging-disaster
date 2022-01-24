@@ -123,12 +123,11 @@ class Me(turtle.Turtle):
                 won.write('You Won', font=bigstyle, align='center') #massive YOU WON in middle of screen
                 
                 endtime = time.monotonic()
-                timeTaken = endtime - startTime #super long decimal answer!
-                format_time = "{:.2f}".format(timeTaken) #formats down to 2 decimal points.
+                timeTaken = endtime - startTime #timer value
                 won.goto(0, -85)
                 won.write('GLORIOUS!', font=smallstyle, align='center')
                 won.goto(0, -150)
-                calc_score = float(score) / float(format_time) * 1000
+                calc_score = float(score) / float(timeTaken) * 10000
                 format_score = math.trunc(calc_score)
                 won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                 won.goto(0, -215)
@@ -173,11 +172,10 @@ class Me(turtle.Turtle):
                         won.write('GAME OVER', font=bigstyle, align='center')
                         won.goto(0, -85)
                         endtime = time.monotonic()
-                        timeTaken = endtime - startTime #getting the total time taken (long decimal)
-                        format_time = "{:.2f}".format(timeTaken) #formatting the long decimal to two decimal places
+                        timeTaken = endtime - startTime #getting the total time taken
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
                         won.goto(0, -150)
-                        calc_score = float(score) / float(format_time) * 1000
+                        calc_score = float(score) / float(timeTaken) * 10000
                         format_score = math.trunc(calc_score)
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
@@ -189,11 +187,10 @@ class Me(turtle.Turtle):
                         won.write('GAME OVER', font=bigstyle, align='center')
                         endtime = time.monotonic()
                         timeTaken = endtime - startTime
-                        format_time = "{:.2f}".format(timeTaken)
                         won.goto(0, -85)
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
                         won.goto(0, -150)
-                        calc_score = float(score) / float(format_time) * 1000
+                        calc_score = float(score) / float(timeTaken) * 10000
                         format_score = math.trunc(calc_score)
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
