@@ -617,37 +617,38 @@ while game:
             engageSword() #engage the sword if it is being triggered
             cardinale1.defeat() #check if the cardinales have been slashed and if so trigger their defeats
             cardinale2.defeat()
-        if cardinale1.dying == True: #keeps the cardinales on the screen for a bit after they are slashed
+        if cardinale1.dying == True: #keeps the cardinales on the screen for a certain amount of repetitions after they are slashed
             cardinale1.deathCount = cardinale1.deathCount + 1
         if cardinale2.dying == True:
             cardinale2.deathCount = cardinale2.deathCount + 1
-        for coin in coins:
-            if coin.collected == False:
-                coin.collect()
+        for coin in coins: #going through each coin
+            if coin.collected == False: #if it hasn't been collected yet
+                coin.collect() #detect if it's been collected and act on that
                 
     
     # For lag testing purposes...
     # print("There are currently {} turtles on the screen.".format(len(win.turtles())))
 
 
-    if score > highscore: highscore = score
+    if score > highscore: highscore = score #if the score achieved in the game is higher than the highscore, set the highscore to the new highscore!
 
+    #TERMINAL INPUT TO PLAY AGAIN
     gameInput = input("Would you like to play again? y for yes, n for no: ")
-    if gameInput == "n":
+    if gameInput == "n": #if the input is 'n', end the loop and close the turtle window
         game = False
         turtle.bye()
     else:
-        print("Starting again in 3...")
+        print("Starting again in 3...") #timer to give player time to return to the turtle window before playing again
         time.sleep(1)
         print("2...")
         time.sleep(1)
         print("1...")
         time.sleep(1)
         won.clear()
-        for num, i in enumerate(coins):
-            location = coinLocations[num]
-            i.x = location[0]
-            i.y = location[1]
-            i.collected = False
-            i.goto(i.x, i.y)
-            i.showturtle()
+        for num, i in enumerate(coins): #reset the locations of all the coins
+            location = coinLocations[num] #storing the tuple from the list in a variable
+            i.x = location[0] #x location from tuple
+            i.y = location[1] #y location from tuple
+            i.collected = False #resetting the collected attribute so the coins can be re-collected
+            i.goto(i.x, i.y) #go to the locations from the tuple
+            i.showturtle() #show the coin
