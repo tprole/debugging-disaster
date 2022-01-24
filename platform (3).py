@@ -11,6 +11,8 @@ import random
 import glob
 import time
 import csv
+import shelve
+import math
 game = True
 attempt = 0
 
@@ -23,7 +25,7 @@ win.colormode(255) #allows me to use rgb colours
 win.setup(1195, 835) #size of background image
 
 
-#READING IMAGE PATHS FROM A CSV AND STORING THEM IN A DICTIONARY
+# READING IMAGE PATHS FROM A CSV AND STORING THEM IN A DICTIONARY
 
 reader = csv.reader(open('image_paths.csv', 'r'))
 imageFiles = {}
@@ -36,10 +38,17 @@ for row in reader:
 # print(imageFiles)
 
 
-#REGISTERING EACH SHAPE TO THE TURTLE WINDOW
+# REGISTERING EACH SHAPE TO THE TURTLE WINDOW
 
 for file in imageFiles: #registers each filename as a shape for turtles to be created as
     win.register_shape(imageFiles[file])
+
+# CREATING STYLES FOR THE TEXT TURTLES
+bigstyle = ('Karmatic Arcade', 125) #big style for giant "GAME OVER" text
+instructionstyle = ('The Led Display St', 12) #creating the font for the instructions
+smallstyle = ('The Led Display St', 50)
+style = ('The Led Display St', 20) #Creates a style for the score turtles to use.
+highscorestyle = ('The Led Display St', 15)
 
 
 # WRITING THE INSTRUCTIONS AT THE BOTTOM OF THE SCREEN
@@ -49,7 +58,7 @@ instructions.penup() #so it doesn't draw lines under itself
 instructions.hideturtle() #so there's no triangle shown
 instructions.color('white')
 instructions.goto(-450, -400)
-instructionstyle = ('Courier', 15, 'bold') #creating the font for the instructions
+
 #writing the instructions
 instructions.write("Arrow keys to change direction", font=instructionstyle, align='center')
 instructions.goto(-200, -400)
@@ -61,7 +70,7 @@ instructions.write("Try to run the program from the top right corner!", font=ins
 
 
 # CREATING A CLASS FOR THE MAIN CHARACTER
-
+format_score = 0
 class Me(turtle.Turtle):
         def __init__(self):
             super().__init__()
@@ -107,17 +116,22 @@ class Me(turtle.Turtle):
         # @return:
         # Checks if the main character has reached the end of the final platform. If they have, writes a victory message with a text turtle and closes the while loop.
         def runProgram(self):
-            global gameOn, mainY, mainX
+            global gameOn, mainY, mainX, format_score
             if mainY >= 290 and mainX >= 460: #coordinates of top right corner, which is the objective
-                bigstyle = ('Courier', 200, 'bold')
+                
                 won.goto(0, 0)
                 won.write('You Won', font=bigstyle, align='center') #massive YOU WON in middle of screen
-                smallstyle = ('Courier', 50, 'bold')
+                
                 endtime = time.monotonic()
                 timeTaken = endtime - startTime #super long decimal answer!
                 format_time = "{:.2f}".format(timeTaken) #formats down to 2 decimal points.
-                won.goto(0, -50)
-                won.write('GLORIOUS! You took {} seconds'.format(format_time), font=smallstyle, align='center') #prints out time as a success metric for the game
+                won.goto(0, -85)
+                won.write('GLORIOUS!', font=smallstyle, align='center')
+                won.goto(0, -150)
+                calc_score = float(score) / float(format_time) * 1000
+                format_score = math.trunc(calc_score)
+                won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
+                won.goto(0, -215)
                 print("WIN") #prints win in terminal as part of the game log
                 gameOn = False #ends while loop
 
@@ -149,41 +163,40 @@ class Me(turtle.Turtle):
         # @return:
         # Checks if the Cardinales are in a dying state, in which case they should not affect the gameplay. If they are not in a dying state, compares the coordinates of the main character with those of the Cardinales. If they are colliding, triggers the game over sequence.
         def dead(self, cardinale1, cardinale2):
-            global mainX, mainY, slash, gameOn
+            global mainX, mainY, slash, gameOn, format_score
             if cardinale1.dying != True: #only runs this if the Cardinale isn't dying. avoids unwanted collisions from after killing the Cardinales so that the main character doesn't die
                 if mainX <= cardinale1.x + 50 and mainX >= cardinale1.x - 50 and slash != True: #detecting collisions between the main character and Cardinale1
                     if mainY <= cardinale1.y + 25 and mainY >= cardinale1.y - 25:
                         gameOn = False #exiting the while loop
-                        bigstyle = ('Courier', 200, 'bold') #big style for giant "GAME OVER" text
+                        
                         won.goto(0, 0)
                         won.write('GAME OVER', font=bigstyle, align='center')
-                        
-                        won.goto(0, -50)
-                        smallstyle = ('Courier', 50, 'bold') #small style for the small print after GAME OVER
+                        won.goto(0, -85)
                         endtime = time.monotonic()
-                        timeTaken = endtime - startTime
-                        format_time = "{:.2f}".format(timeTaken)
+                        timeTaken = endtime - startTime #getting the total time taken (long decimal)
+                        format_time = "{:.2f}".format(timeTaken) #formatting the long decimal to two decimal places
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
-                        won.goto(0, -100)
-                        won.write('You took {} seconds'.format(format_time), font=smallstyle, align='center')
-                        print("LOSE")
+                        won.goto(0, -150)
+                        calc_score = float(score) / float(format_time) * 1000
+                        format_score = math.trunc(calc_score)
+                        won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
+                        print("LOSE") #in the game log
             if cardinale2.dying != True:                     
                 if mainX <= cardinale2.x + 50 and mainX >= cardinale2.x - 50 and slash != True:
                     if mainY <= cardinale2.y + 25 and mainY >= cardinale2.y - 25:
                         gameOn = False
                         won.goto(0, 0)
-                        bigstyle = ('Courier', 200, 'bold')
                         won.write('GAME OVER', font=bigstyle, align='center')
-                        
                         endtime = time.monotonic()
                         timeTaken = endtime - startTime
                         format_time = "{:.2f}".format(timeTaken)
-                        won.goto(0, -50)
-                        smallstyle = ('Courier', 50, 'bold')
+                        won.goto(0, -85)
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
-                        won.goto(0, -100)
-                        won.write('You took {} seconds'.format(format_time), font=smallstyle, align='center')
-                        print("LOSE")
+                        won.goto(0, -150)
+                        calc_score = float(score) / float(format_time) * 1000
+                        format_score = math.trunc(calc_score)
+                        won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
+                        print("LOSE") #in the game log
  
 
         # walls()
@@ -400,7 +413,7 @@ def jump():
 # @return:
 # Function mainly drafted for testing purposes, prints out the x and y coordinates of the main character.
 def documentcoords():
-        print("X-coordinate: {} Y-coordinate: {}".format(mainChar.xcor(), mainChar.ycor()))
+        print("X-coordinate: {} Y-coordinate: {}".format(mainChar.xcor(), mainChar.ycor())) #in the game log
 
 # moveChar()
 # @param:
@@ -408,16 +421,16 @@ def documentcoords():
 # Combines all movement-related functions into one easily callable function. If the main character's direction attribute is left, moveLeft is called. Likewise for moveRight. If the jump attribute is true, triggers the jump command and increases the jumpCount by 1, allowing the jump sequence to be finite yet smooth.
 def moveChar():
         global jumpCount, slashCount
-        if mainChar.direction == "left":
+        if mainChar.direction == "left": #move in the direction stated in the attribute
             moveLeft()
         elif mainChar.direction == "right":
             moveRight()
         if mainChar.jump == True:
             jump()
             jumpCount = jumpCount + 1
-        if slash == True:
+        if slash == True: #if the slash variable is true, engage the sword and increase the slashCount by 1.
             engageSword()
-            slashCount = slashCount + 1
+            slashCount = slashCount + 1 #this basically means the slash image is on the screen for longer. 
 
 # triggerJump()
 # @param:
@@ -491,10 +504,13 @@ won.penup()
 won.hideturtle()
 won.color('white')
 
-style = ('Courier', 100, 'normal') #Creates a style for the text turtles to use.
+
+with open("./highscore_storage.txt", mode='r') as f:
+    highscore = f.read() #Sets the initial highscore to whatever is stored in the CSV file. This is changed at the end of each game if the score is higher than this file's contents.
+
+print('Current highscore: ' + highscore)
 
 
-highscore = 0 #Sets the initial highscore to 0. This is changed at the end of each game if the score is higher than this variable's contents.
 
 # CREATING CHARACTER TURTLES
 mainChar = Me() #Creates a main character turtle from the class Me
@@ -548,7 +564,7 @@ while game:
     scoreturtle.hideturtle()
     scoreturtle.penup()
     scoreturtle.goto(400, 343)
-    style = ('Courier', 30, 'bold')
+
     scoreturtle.color('white')
     scoreturtle.write('0', font=style, align='center')
 
@@ -562,7 +578,6 @@ while game:
     highscorestamp.stamp()
 
     #Writes the high score from the variable defined above
-    highscorestyle = ('Courier', 20, 'bold')
     highscoreturtle.hideturtle()
     highscoreturtle.penup()
     highscoreturtle.goto(-335, 348)
@@ -643,12 +658,17 @@ while game:
     # print("There are currently {} turtles on the screen.".format(len(win.turtles())))
 
 
-    if score > highscore: highscore = score #if the score achieved in the game is higher than the highscore, set the highscore to the new highscore!
+    if float(format_score) > float(highscore): highscore = format_score #if the score achieved in the game is higher than the highscore, set the highscore to the new highscore!
+    with open("./highscore_storage.txt", mode='w') as f:
+        f.write(str(highscore))
+    print("Highscore: " + str(highscore))
+
 
     #TERMINAL INPUT TO PLAY AGAIN
-    gameInput = input("Would you like to play again? y for yes, n for no: ")
+    gameInput = input("Would you like to play again? y for yes, n for no: ") #this happens in the terminal, player needs to switch windows.
     if gameInput == "n": #if the input is 'n', end the loop and close the turtle window
         game = False
+        print("The graphics window has been closed. Have a glorious day.")
         turtle.bye()
     else:
         print("Starting again in 3...") #timer to give player time to return to the turtle window before playing again
