@@ -13,7 +13,7 @@ import time
 import csv
 import shelve
 import math
-game = True
+game = False
 attempt = 0
 
 
@@ -45,6 +45,7 @@ for file in imageFiles: #registers each filename as a shape for turtles to be cr
 
 # CREATING STYLES FOR THE TEXT TURTLES
 bigstyle = ('Karmatic Arcade', 125) #big style for giant "GAME OVER" text
+mediumstyle = ('Karmatic Arcade', 70) #medium style for game title at beginning
 instructionstyle = ('The Led Display St', 12) #creating the font for the instructions
 smallstyle = ('The Led Display St', 50)
 style = ('The Led Display St', 20) #Creates a style for the score turtles to use.
@@ -175,8 +176,7 @@ class Me(turtle.Turtle):
                         timeTaken = endtime - startTime #getting the total time taken
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
                         won.goto(0, -150)
-                        calc_score = float(score) / float(timeTaken) * 10000
-                        format_score = math.trunc(calc_score)
+                        format_score = 0
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
             if cardinale2.dying != True:                     
@@ -190,8 +190,7 @@ class Me(turtle.Turtle):
                         won.goto(0, -85)
                         won.write('A GLORIOUS death!', font=smallstyle, align='center')
                         won.goto(0, -150)
-                        calc_score = float(score) / float(timeTaken) * 10000
-                        format_score = math.trunc(calc_score)
+                        format_score = 0
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
  
@@ -466,6 +465,15 @@ def turnRight():
 def stop():
         mainChar.direction = "stop"
 
+# start()
+# @param:
+# @return:
+# Used with a keyboard command to start the game at the user's decided point in time.
+def start():
+    global game
+    game = True
+    initialText.clear()
+
 
 platforms = { #a dictionary used for storing coordinates of platforms in a more memorable way
         'right_wall': 540,
@@ -540,9 +548,37 @@ turtle.listen()
 turtle.onkey(turnLeft, "Left")
 turtle.onkey(turnRight, "Right")
 turtle.onkey(stop, "Down")
+turtle.onkey(triggerJump, "Up")
 turtle.onkey(triggerJump, "space")
 turtle.onkey(documentcoords, "y")
 turtle.onkey(slash, "k")
+turtle.onkey(start, "z")
+
+
+# PRINTING START SCREEN TEXT
+
+initialText = turtle.Turtle()
+initialText.hideturtle()
+initialText.penup()
+initialText.goto(0, 200)
+initialText.color('white')
+initialText.write('Debugging', font=bigstyle, align='center')
+initialText.goto(0, 75)
+initialText.write('Disaster',font=bigstyle, align='center')
+
+initialText.goto(0, -50)
+initialText.write('Arrow keys to move', font=smallstyle, align='center')
+initialText.goto(0,-100)
+initialText.write('Space / up arrow to jump', font=smallstyle, align='center')
+initialText.goto(0, -150)
+initialText.write('K to attack', font=smallstyle, align='center')
+initialText.goto(0,-200)
+initialText.write('Get to the top right corner', font=smallstyle, align='center')
+initialText.goto(0, -300)
+initialText.write('Press Z to start')
+
+time.sleep(5)
+
 
 while game:
     attempt = attempt + 1
