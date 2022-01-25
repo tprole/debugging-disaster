@@ -13,7 +13,7 @@ import time
 import csv
 import shelve
 import math
-game = False
+game = True
 attempt = 0
 
 
@@ -23,6 +23,7 @@ win = turtle.Screen()
 win.title("Debugging Disaster: Adventure through ICS3U") #displays the title of the game at the top of the window
 win.colormode(255) #allows me to use rgb colours
 win.setup(1195, 835) #size of background image
+
 
 
 # READING IMAGE PATHS FROM A CSV AND STORING THEM IN A DICTIONARY
@@ -61,11 +62,11 @@ instructions.color('white')
 instructions.goto(-450, -400)
 
 #writing the instructions
-instructions.write("Arrow keys to change direction", font=instructionstyle, align='center')
+instructions.write("Z and X to move left + right", font=instructionstyle, align='center')
 instructions.goto(-200, -400)
 instructions.write("Space to jump", font=instructionstyle, align='center')
 instructions.goto(0, -400)
-instructions.write("K to attack", font=instructionstyle, align='center')
+instructions.write("Enter to attack", font=instructionstyle, align='center')
 instructions.goto(350, -400)
 instructions.write("Try to run the program from the top right corner!", font=instructionstyle, align='center')
 
@@ -119,7 +120,8 @@ class Me(turtle.Turtle):
         def runProgram(self):
             global gameOn, mainY, mainX, format_score
             if mainY >= 290 and mainX >= 460: #coordinates of top right corner, which is the objective
-                
+                win.bgpic('nopic')
+                win.bgcolor('black')
                 won.goto(0, 0)
                 won.write('You Won', font=bigstyle, align='center') #massive YOU WON in middle of screen
                 
@@ -132,6 +134,7 @@ class Me(turtle.Turtle):
                 format_score = math.trunc(calc_score)
                 won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
                 won.goto(0, -215)
+                won.write('Return to terminal to play again', font=style, align='center') #prints out time as a success metric for the game
                 print("WIN") #prints win in terminal as part of the game log
                 gameOn = False #ends while loop
 
@@ -168,7 +171,7 @@ class Me(turtle.Turtle):
                 if mainX <= cardinale1.x + 50 and mainX >= cardinale1.x - 50 and slash != True: #detecting collisions between the main character and Cardinale1
                     if mainY <= cardinale1.y + 25 and mainY >= cardinale1.y - 25:
                         gameOn = False #exiting the while loop
-                        
+                        win.bgpick('nopic')
                         won.goto(0, 0)
                         won.write('GAME OVER', font=bigstyle, align='center')
                         won.goto(0, -85)
@@ -178,11 +181,15 @@ class Me(turtle.Turtle):
                         won.goto(0, -150)
                         format_score = 0
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
+                        won.goto(0, -215)
+                        won.write('Return to terminal to play again', font=style, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
             if cardinale2.dying != True:                     
                 if mainX <= cardinale2.x + 50 and mainX >= cardinale2.x - 50 and slash != True:
                     if mainY <= cardinale2.y + 25 and mainY >= cardinale2.y - 25:
                         gameOn = False
+                        win.bgpic('nopic')
+                        win.bgcolor('black')
                         won.goto(0, 0)
                         won.write('GAME OVER', font=bigstyle, align='center')
                         endtime = time.monotonic()
@@ -192,6 +199,8 @@ class Me(turtle.Turtle):
                         won.goto(0, -150)
                         format_score = 0
                         won.write('SCORE: {}'.format(format_score), font=smallstyle, align='center') #prints out time as a success metric for the game
+                        won.goto(0, -215)
+                        won.write('Return to terminal to play again', font=style, align='center') #prints out time as a success metric for the game
                         print("LOSE") #in the game log
  
 
@@ -465,15 +474,6 @@ def turnRight():
 def stop():
         mainChar.direction = "stop"
 
-# start()
-# @param:
-# @return:
-# Used with a keyboard command to start the game at the user's decided point in time.
-def start():
-    global game
-    game = True
-    initialText.clear()
-
 
 platforms = { #a dictionary used for storing coordinates of platforms in a more memorable way
         'right_wall': 540,
@@ -504,16 +504,65 @@ platforms = { #a dictionary used for storing coordinates of platforms in a more 
 
 turtle.delay(0) #Removes default lag on the turtle window.
 
+# HIGHSCORE SETTING
+with open("./highscore_storage.txt", mode='r') as f:
+    highscore = f.read() #Sets the initial highscore to whatever is stored in the CSV file. This is changed at the end of each game if the score is higher than this file's contents.
+
+print('Current highscore: ' + highscore)
+
+
+# PRINTING START SCREEN TEXT
+
+win.bgcolor('black')
+initialText = turtle.Turtle()
+initialText.hideturtle()
+initialText.penup()
+initialText.goto(0, 200)
+initialText.color('white')
+initialText.write('Debugging', font=bigstyle, align='center') #displaying title of game in large text
+initialText.goto(0, 50)
+initialText.write('Disaster',font=bigstyle, align='center')
+initialText.goto(0, -50)
+initialText.write('Z and X to move left + right', font=smallstyle, align='center') #displaying instructions in smaller text
+initialText.goto(0,-100)
+initialText.write('Space to jump', font=smallstyle, align='center')
+initialText.goto(0, -150)
+initialText.write('Enter to attack', font=smallstyle, align='center')
+initialText.goto(0,-200)
+initialText.write('/ to stop', font=smallstyle, align='center')
+initialText.goto(0, -250)
+initialText.write('Get to the top right corner', font=smallstyle, align='center')
+
+
+initialText.goto(-400, -320)
+initialText.pendown()
+initialText.begin_fill()
+initialText.goto(400, -320)
+initialText.goto(400, -315)
+initialText.goto(-400, -315)
+initialText.goto(-400, -320)
+initialText.end_fill()
+initialText.penup()
+
+initialCountdown = turtle.Turtle()
+initialCountdown.color('white')
+initialCountdown.penup()
+initialCountdown.hideturtle()
+initialCountdown.goto(0, -270)
+for i in range(15): #waiting 15 seconds to allow the user time to read the instructions
+    count = 15 - i
+    initialCountdown.write('Starting in {}...'.format(count), font=style, align='center')
+    time.sleep(1) 
+    initialCountdown.clear()
+initialText.clear() #clearing all the text before the game starts
+
+
 won = turtle.Turtle() #Creates a turtle for displaying ending sequence text.
 won.penup()
 won.hideturtle()
 won.color('white')
 
 
-with open("./highscore_storage.txt", mode='r') as f:
-    highscore = f.read() #Sets the initial highscore to whatever is stored in the CSV file. This is changed at the end of each game if the score is higher than this file's contents.
-
-print('Current highscore: ' + highscore)
 
 
 
@@ -539,50 +588,33 @@ highscoreturtle = turtle.Turtle() #A turtle for displaying the highscore.
 highscorestamp = turtle.Turtle() #A turtle for stamping over the highscore to allow a new one to be written over top of it.
 
 
-# CHANGING BACKGROUND IMAGE
-win.bgpic(imageFiles['backdrop'])
+
 
 
 # KEYBOARD COMMANDS
 turtle.listen()
-turtle.onkey(turnLeft, "Left")
-turtle.onkey(turnRight, "Right")
-turtle.onkey(stop, "Down")
-turtle.onkey(triggerJump, "Up")
+turtle.onkey(turnLeft, "z")
+turtle.onkey(turnRight, "x")
+turtle.onkey(stop, "/")
 turtle.onkey(triggerJump, "space")
 turtle.onkey(documentcoords, "y")
-turtle.onkey(slash, "k")
-turtle.onkey(start, "z")
+turtle.onkey(slash, "Return")
 
 
-# PRINTING START SCREEN TEXT
 
-initialText = turtle.Turtle()
-initialText.hideturtle()
-initialText.penup()
-initialText.goto(0, 200)
-initialText.color('white')
-initialText.write('Debugging', font=bigstyle, align='center')
-initialText.goto(0, 75)
-initialText.write('Disaster',font=bigstyle, align='center')
 
-initialText.goto(0, -50)
-initialText.write('Arrow keys to move', font=smallstyle, align='center')
-initialText.goto(0,-100)
-initialText.write('Space / up arrow to jump', font=smallstyle, align='center')
-initialText.goto(0, -150)
-initialText.write('K to attack', font=smallstyle, align='center')
-initialText.goto(0,-200)
-initialText.write('Get to the top right corner', font=smallstyle, align='center')
-initialText.goto(0, -300)
-initialText.write('Press Z to start')
 
-time.sleep(5)
+
+
 
 
 while game:
     attempt = attempt + 1
     turtle.delay(0)
+
+    # CHANGING BACKGROUND IMAGE
+    win.bgpic(imageFiles['backdrop'])
+    win.bgcolor('white')
 
     #Initialises the score stamp
     scorestamp.shape('square')
@@ -624,11 +656,18 @@ while game:
     mainY = -200
     jumpCount = 0 #resetting any jumps
 
-    #MOVING THE MAIN CHARACTER TO THE STARTING LOCATION
+    #MOVING THE MAIN CHARACTER TO THE STARTING LOCATION + RESETTING ATTRIBUTES
     mainChar.goto(mainX, mainY)
+    mainChar.shape(imageFiles['tara'])
+    mainChar.movespeed = 1
+    mainChar.direction = 'right'
+    mainChar.swordEquipped = False
+    mainChar.jump = False
 
     #MOVING THE SWORD TO THE STARTING LOCATION
-    sword.goto(200, -200)    
+    sword.goto(200, -200)   
+    sword.collected = False
+    sword.showturtle() 
 
     #RESETTING COORDINATES, SHAPES AND ATTRIBUTES FOR FURTHER ATTEMPTS
     if attempt > 1:
@@ -704,13 +743,25 @@ while game:
         print("The graphics window has been closed. Have a glorious day.")
         turtle.bye()
     else:
+        win.bgpic('nopic')
+        win.bgcolor('black')
+        countdownTurtle = turtle.Turtle() #creating a turtle to count down the screen to the beginning of next turn
+        countdownTurtle.color('white')
+        countdownTurtle.hideturtle()
+        countdownTurtle.penup()
+        won.clear()
+        countdownTurtle.write('3', font=bigstyle, align='center') #starting countdown
         print("Starting again in 3...") #timer to give player time to return to the turtle window before playing again
-        time.sleep(1)
+        time.sleep(1) #waiting before starting next part of countdown
+        countdownTurtle.clear()
+        countdownTurtle.write('2', font=bigstyle, align='center')
         print("2...")
         time.sleep(1)
+        countdownTurtle.clear()
+        countdownTurtle.write('1', font=bigstyle, align='center')
         print("1...")
         time.sleep(1)
-        won.clear()
+        countdownTurtle.clear()
         for num, i in enumerate(coins): #reset the locations of all the coins
             location = coinLocations[num] #storing the tuple from the list in a variable
             i.x = location[0] #x location from tuple
@@ -718,3 +769,4 @@ while game:
             i.collected = False #resetting the collected attribute so the coins can be re-collected
             i.goto(i.x, i.y) #go to the locations from the tuple
             i.showturtle() #show the coin
+
