@@ -534,6 +534,7 @@ initialText.goto(0, -250)
 initialText.write('Get to the top right corner', font=smallstyle, align='center')
 
 
+# DRAWING RECTANGLE ON SPLASH SCREEN FOR VISUALS USING THE NOW-UNUSED TEXT TURTLE
 initialText.goto(-400, -320)
 initialText.pendown()
 initialText.begin_fill()
@@ -544,6 +545,7 @@ initialText.goto(-400, -320)
 initialText.end_fill()
 initialText.penup()
 
+#CREATING A TURTLE TO COUNT DOWN SECONDS TO GAME START
 initialCountdown = turtle.Turtle()
 initialCountdown.color('white')
 initialCountdown.penup()
@@ -555,6 +557,7 @@ for i in range(15): #waiting 15 seconds to allow the user time to read the instr
     time.sleep(1) 
     initialCountdown.clear()
 initialText.clear() #clearing all the text before the game starts
+
 
 
 won = turtle.Turtle() #Creates a turtle for displaying ending sequence text.
@@ -588,9 +591,6 @@ highscoreturtle = turtle.Turtle() #A turtle for displaying the highscore.
 highscorestamp = turtle.Turtle() #A turtle for stamping over the highscore to allow a new one to be written over top of it.
 
 
-
-
-
 # KEYBOARD COMMANDS
 turtle.listen()
 turtle.onkey(turnLeft, "z")
@@ -599,10 +599,6 @@ turtle.onkey(stop, "/")
 turtle.onkey(triggerJump, "space")
 turtle.onkey(documentcoords, "y")
 turtle.onkey(slash, "Return")
-
-
-
-
 
 
 
