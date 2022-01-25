@@ -23,7 +23,7 @@ win = turtle.Screen()
 win.title("Debugging Disaster: Adventure through ICS3U") #displays the title of the game at the top of the window
 win.colormode(255) #allows me to use rgb colours
 win.setup(1195, 835) #size of background image
-
+win.tracer(1)
 
 
 # READING IMAGE PATHS FROM A CSV AND STORING THEM IN A DICTIONARY
@@ -518,11 +518,13 @@ initialText = turtle.Turtle()
 initialText.hideturtle()
 initialText.penup()
 initialText.goto(0, 200)
-initialText.color('white')
+initialText.color('yellow')
 initialText.write('Debugging', font=bigstyle, align='center') #displaying title of game in large text
 initialText.goto(0, 50)
+initialText.color('red')
 initialText.write('Disaster',font=bigstyle, align='center')
 initialText.goto(0, -50)
+initialText.color('white')
 initialText.write('Z and X to move left + right', font=smallstyle, align='center') #displaying instructions in smaller text
 initialText.goto(0,-100)
 initialText.write('Space to jump', font=smallstyle, align='center')
